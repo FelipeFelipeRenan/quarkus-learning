@@ -6,12 +6,16 @@ import java.util.Optional;
 import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.json.Json;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 
 @Path("/accounts")
 public class AccountResource {
@@ -37,12 +41,35 @@ public class AccountResource {
     @GET
     @Path("/{accountNumber}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Account geAccount(@PathParam("accountNumber") Long accountNumber) {
+    public Account getAccount(@PathParam("accountNumber") Long accountNumber) {
         Optional<Account> response = accounts.stream().filter(acct -> acct.getAccountNumber().equals(accountNumber))
                 .findFirst();
 
         return response
-                .orElseThrow(() -> new NotFoundException("Account with id of " + accountNumber + "does not exist"));
+                .orElseThrow(() -> new WebApplicationException(
+                        "Account with id of " + accountNumber + "does not exist.", 404));
 
+    }
+
+    @Provider
+    public static class ErrorMapper implements ExceptionMapper<Exception> {
+
+        @Override
+        public Response toResponse(Exception exception) {
+            int code = 500;
+            if (exception instanceof WebApplicationException) {
+                code = ((WebApplicationException) exception).getResponse().getStatus();
+            }
+
+            jakarta.json.JsonObjectBuilder entityBuilder = Json.createObjectBuilder()
+                    .add("exceptionType", exception.getClass().getName()).add("code", code);
+
+            if (exception.getMessage() != null) {
+                entityBuilder.add("error", exception.getMessage());
+            }
+
+            return Response.status(code).entity(entityBuilder.build()).build();
+
+        }
     }
 }
