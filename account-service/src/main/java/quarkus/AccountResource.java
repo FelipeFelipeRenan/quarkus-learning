@@ -7,7 +7,11 @@ import java.util.Set;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.json.Json;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -49,6 +53,42 @@ public class AccountResource {
                 .orElseThrow(() -> new WebApplicationException(
                         "Account with id of " + accountNumber + "does not exist.", 404));
 
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response createAccount(Account account) {
+        if (account.getAccountNumber() == null) {
+            throw new WebApplicationException("No account number specified", 400);
+        }
+
+        accounts.add(account);
+        return Response.status(201).entity(account).build();
+    }
+
+    @PUT
+    @Path("{accountNumber}/withdrawal")
+    public Account withdrawnal(@PathParam("accountNumber") Long accountNumber, String amount) {
+        Account account = getAccount(accountNumber);
+        account.withdrawnFunds(new BigDecimal(amount));
+        return account;
+    }
+
+    @PUT
+    @Path("{accountNumber}/withdrawal")
+    public Account deposit(@PathParam("accountNumber") Long accountNumber, String amount) {
+        Account account = getAccount(accountNumber);
+        account.withdrawnFunds(new BigDecimal(amount));
+        return account;
+    }
+
+    @DELETE
+    @Path("{accountNumber}")
+    public Response closeAccount(@PathParam("accountNumber") Long accountNumber){
+        Account oldAccount  = getAccount(accountNumber);
+        accounts.remove(oldAccount);
+        return Response.noContent().build();
     }
 
     @Provider
