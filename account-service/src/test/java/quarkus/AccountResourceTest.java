@@ -1,159 +1,97 @@
-package quarkus;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.collection.IsEmptyCollection.empty;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+package quarkus;
 
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.Set;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 
 @QuarkusTest
 @TestMethodOrder(OrderAnnotation.class)
 public class AccountResourceTest {
-  @Test
-  @Order(1)
-  void testRetrieveAll() {
-    Response result =
+
+    @Test
+    void testAllAccounts() {
         given()
           .when().get("/accounts")
           .then()
-            .statusCode(200)
-            .body(
-                containsString("George Baird"),
-                containsString("Mary Taylor"),
-                containsString("Diana Rigg")
-            )
-            .extract()
-            .response();
+             .statusCode(200)
+             .body("$.size()", equalTo(3)); // Assuming you have 3 initial accounts
+    }
 
-    List<Account> accounts = result.jsonPath().getList("$");
-    assertThat(accounts, not(empty()));
-    assertThat(accounts, hasSize(3));
-  }
-
-  @Test
-  @Order(2)
-  void testGetAccount() {
-    Account account =
+    @Test
+    void testGetAccount() {
         given()
-            .when().get("/accounts/{accountNumber}", 545454545)
-            .then()
-              .statusCode(200)
-              .extract()
-              .as(Account.class);
+          .pathParam("accountNumber", 123456789L)
+          .when().get("/accounts/{accountNumber}")
+          .then()
+             .statusCode(200)
+             .body("accountNumber", equalTo(123456789L),
+                   "customerName", equalTo("George Baird"),
+                   "balance", equalTo(354.23f),
+                   "accountStatus", equalTo("OPEN"));
+    }
 
-    assertThat(account.getAccountNumber(), equalTo(545454545L));
-    assertThat(account.getCustomerName(), equalTo("Diana Rigg"));
-    assertThat(account.getBalance(), equalTo(new BigDecimal("422.00")));
-    assertThat(account.getAccountStatus(), equalTo(AccountStatus.OPEN));
-  }
+    @Test
+    void testCreateAccount() {
+        Account newAccount = new Account(999L, 888L, "John Doe", new BigDecimal("1000.00"));
 
-  @Test
-  @Order(3)
-  void testCreateAccount() {
-    Account newAccount = new Account(324324L, 112244L, "Sandy Holmes", new BigDecimal("154.55"));
-
-    Account returnedAccount =
         given()
           .contentType(ContentType.JSON)
           .body(newAccount)
           .when().post("/accounts")
           .then()
-            .statusCode(201)
-            .extract()
-            .as(Account.class);
+             .statusCode(201)
+             .body("accountNumber", equalTo(999L),
+                   "customerName", equalTo("John Doe"),
+                   "balance", equalTo(1000.00f),
+                   "accountStatus", equalTo("OPEN"));
+    }
 
-    assertThat(returnedAccount, notNullValue());
-    assertThat(returnedAccount, equalTo(newAccount));
-
-    Response result =
+    @Test
+    void testWithdrawal() {
         given()
-            .when().get("/accounts")
-            .then()
-            .statusCode(200)
-            .body(
-                containsString("George Baird"),
-                containsString("Mary Taylor"),
-                containsString("Diana Rigg"),
-                containsString("Sandy Holmes")
-            )
-            .extract()
-            .response();
-
-    List<Account> accounts = result.jsonPath().getList("$");
-    assertThat(accounts, not(empty()));
-    assertThat(accounts, hasSize(4));
-  }
-
-  @Test
-  @Order(4)
-  void testAccountWithdraw() {
-    Account account =
+          .pathParam("accountNumber", 123456789L)
+          .body("50.00")
+          .when().put("/accounts/{accountNumber}/withdrawal")
+          .then()
+             .statusCode(200)
+             .body("balance", equalTo(304.23f));
+    }
+    
+    @Test
+    void testDeposit() {
         given()
-            .when().get("/accounts/{accountNumber}", 545454545)
-            .then()
-            .statusCode(200)
-            .extract()
-            .as(Account.class);
+          .pathParam("accountNumber", 123456789L)
+          .body("50.00")
+          .when().put("/accounts/{accountNumber}/deposit")
+          .then()
+             .statusCode(200)
+             .body("balance", equalTo(354.23f));
+    }
+    
 
-    assertThat(account.getAccountNumber(), equalTo(545454545L));
-    assertThat(account.getCustomerName(), equalTo("Diana Rigg"));
-    assertThat(account.getBalance(), equalTo(new BigDecimal("422.00")));
-    assertThat(account.getAccountStatus(), equalTo(AccountStatus.OPEN));
-
-    Account result =
+    @Test
+    void testCloseAccount() {
         given()
-            .body("56.21")
-            .when().put("/accounts/{accountNumber}/withdrawal", 545454545)
-            .then()
-            .statusCode(200)
-            .extract()
-            .as(Account.class);
+          .pathParam("accountNumber", 123456789L)
+          .when().delete("/accounts/{accountNumber}")
+          .then()
+             .statusCode(204);
 
-    assertThat(result.getAccountNumber(), equalTo(545454545L));
-    assertThat(result.getCustomerName(), equalTo("Diana Rigg"));
-    assertThat(result.getBalance(), equalTo(account.getBalance().subtract(new BigDecimal("56.21"))));
-    assertThat(result.getAccountStatus(), equalTo(AccountStatus.OPEN));
-  }
-
-  @Test
-  @Order(4)
-  void testAccountDeposit() {
-    Account account =
+        // Verify the account is closed
         given()
-            .when().get("/accounts/{accountNumber}", 123456789)
-            .then()
-            .statusCode(200)
-            .extract()
-            .as(Account.class);
-
-    assertThat(account.getAccountNumber(), equalTo(123456789L));
-    assertThat(account.getCustomerName(), equalTo("George Baird"));
-    assertThat(account.getBalance(), equalTo(new BigDecimal("354.23")));
-    assertThat(account.getAccountStatus(), equalTo(AccountStatus.OPEN));
-
-    Account result =
-        given()
-            .body("28.42")
-            .when().put("/accounts/{accountNumber}/deposit", 123456789)
-            .then()
-            .statusCode(200)
-            .extract()
-            .as(Account.class);
-
-    assertThat(result.getAccountNumber(), equalTo(123456789L));
-    assertThat(result.getCustomerName(), equalTo("George Baird"));
-    assertThat(result.getBalance(), equalTo(account.getBalance().add(new BigDecimal("28.42"))));
-    assertThat(result.getAccountStatus(), equalTo(AccountStatus.OPEN));
-  }
+          .when().get("/accounts")
+          .then()
+             .statusCode(200)
+             .body("$.size()", equalTo(2)); // Assuming the account was removed
+    }
 }
