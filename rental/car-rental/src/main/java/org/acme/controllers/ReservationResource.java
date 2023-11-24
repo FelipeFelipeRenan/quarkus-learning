@@ -12,7 +12,9 @@ import org.acme.repository.InventoryClient;
 import org.acme.repository.ReservationRepository;
 import org.jboss.resteasy.reactive.RestQuery;
 
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
@@ -48,4 +50,9 @@ public class ReservationResource {
         return carsById.values();
     }
     
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Reservation make(Reservation reservation){
+        return reservationRepository.save(reservation);
+    }
 }
