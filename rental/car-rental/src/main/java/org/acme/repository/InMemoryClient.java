@@ -4,6 +4,9 @@ import java.util.List;
 
 import org.acme.model.Car;
 
+import jakarta.inject.Singleton;
+
+@Singleton
 public class InMemoryClient implements InventoryClient {
     private static final List<Car> ALL_CARS = List.of(
             new Car(1L, "ABC-123", "Toyota", "Corolla"),
