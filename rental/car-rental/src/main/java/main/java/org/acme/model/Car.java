@@ -1,4 +1,4 @@
-package org.acme.model;
+package main.java.org.acme.model;
 
 public class Car {
     private Long id;

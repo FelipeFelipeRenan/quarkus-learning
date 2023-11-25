@@ -1,8 +1,8 @@
-package org.acme.repository;
+package main.java.org.acme.repository;
 
 import java.util.List;
 
-import org.acme.model.Car;
+import main.java.org.acme.model.Car;
 
 public interface InventoryClient {
     List<Car> allCars();

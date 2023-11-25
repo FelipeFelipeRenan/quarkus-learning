@@ -1,8 +1,8 @@
-package org.acme.repository;
+package main.java.org.acme.repository;
 
 import java.util.List;
 
-import org.acme.model.Reservation;
+import main.java.org.acme.model.Reservation;
 
 public interface ReservationRepository {
     List<Reservation> findAll();

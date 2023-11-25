@@ -1,12 +1,12 @@
-package org.acme.repository;
+package main.java.org.acme.repository;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
-import org.acme.model.Reservation;
 
 import jakarta.inject.Singleton;
+import main.java.org.acme.model.Reservation;
 
 @Singleton
 public class InMemoryReservationRepository implements ReservationRepository{

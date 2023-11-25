@@ -1,4 +1,4 @@
-package org.acme.model;
+package main.java.org.acme.model;
 
 import java.time.LocalDate;
 
@@ -50,7 +50,7 @@ public class Reservation {
     }
 
     public boolean isReserved(LocalDate startDate, LocalDate endDate) {
-        return (!(this.getEndDate().isBefore(startDate) || this.getStartDate().isAfter(endDate)));
+        return (!(this.endDate.isBefore(startDate) || this.startDate.isAfter(endDate)));
 
     }
 
