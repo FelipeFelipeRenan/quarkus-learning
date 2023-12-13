@@ -1,0 +1,9 @@
+main/java/org/acme/model/Reservation.class
+main/java/org/acme/controllers/ReservationResource.class
+main/java/org/acme/model/Car.class
+main/java/org/acme/model/Rental.class
+main/java/org/acme/repository/InMemoryReservationRepository.class
+main/java/org/acme/services/RentalClient.class
+main/java/org/acme/repository/InMemoryClient.class
+main/java/org/acme/repository/InventoryClient.class
+main/java/org/acme/repository/ReservationRepository.class
