@@ -11,9 +11,9 @@ import jakarta.ws.rs.core.MediaType;
 @Path("/api/fruit")
 @RegisterRestClient
 public interface FruitViceService {
-    
+
     @GET
     @Path("/{name}")
     @Produces(MediaType.APPLICATION_JSON)
-    FruityVice getFruityVice(@PathParam("name") String name);
+    FruityVice getFruitByName(@PathParam("name") String name);
 }

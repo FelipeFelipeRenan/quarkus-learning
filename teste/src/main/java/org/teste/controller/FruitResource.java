@@ -1,11 +1,15 @@
 package org.teste.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.teste.model.Fruit;
 import org.teste.repository.FruitRepository;
+import org.teste.services.FruitDTO;
+import org.teste.services.FruitViceService;
 
-import io.quarkus.logging.Log;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
@@ -20,28 +24,35 @@ import jakarta.ws.rs.core.Response.Status;
 @Path("/fruit")
 public class FruitResource {
 
+    @RestClient
+    @Inject
+    FruitViceService fruitViceService;
+
     FruitRepository fruitRepository;
 
-    public FruitResource(FruitRepository fruitRepository){
+    public FruitResource(FruitRepository fruitRepository) {
         this.fruitRepository = fruitRepository;
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Fruit> fruits(@QueryParam("season") String season){
+    public List<FruitDTO> fruits(@QueryParam("season") String season) {
         if (season != null) {
-            Log.infof("Searching for %s fruits", season);
-            return fruitRepository.findBySeason(season);
+            return Fruit.findBySeason(season).stream()
+                    .map(fruit -> FruitDTO.of(fruit, fruitViceService.getFruitByName(fruit.name)))
+                    .collect(Collectors.toList());
         }
-        
-        return Fruit.listAll();
+
+        return Fruit.<Fruit>listAll().stream()
+                .map(fruit -> FruitDTO.of(fruit, fruitViceService.getFruitByName(fruit.name)))
+                .collect(Collectors.toList());
     }
 
     @Transactional
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response newFruit(Fruit fruit){
+    public Response newFruit(Fruit fruit) {
         fruit.id = null;
         fruit.persist();
         return Response.status(Status.CREATED).entity(fruit).build();
