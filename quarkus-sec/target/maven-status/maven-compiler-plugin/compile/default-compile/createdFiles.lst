@@ -1,0 +1,9 @@
+org/acme/config/JwtConfig.class
+org/acme/dtos/TokenResponse.class
+org/acme/repository/UserRepository.class
+org/acme/service/AuthService.class
+org/acme/util/JWTGenerator.class
+org/acme/model/User.class
+org/acme/GreetingResource.class
+org/acme/controller/AuthController.class
+org/acme/dtos/LoginRequest.class

@@ -1,6 +1,6 @@
 package org.acme.util;
 
-import org.acme.config.JWTConfig;
+import org.acme.config.JwtConfig;
 
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -8,11 +8,13 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class JWTGenerator {
-    
     @Inject
-    private JWTConfig jwtConfig;
+    private JwtConfig jwtConfig;
 
-    public String generateToken(Long userId, String username){
-        return Jwt.builder
+    public String generateToken(Long userId, String username) {
+        return Jwt.subject(username)
+                .claim("userId", userId)
+                .expiresIn(jwtConfig.getTokenExpiration()) // Tempo de expiração em segundos
+                .sign();
     }
 }
