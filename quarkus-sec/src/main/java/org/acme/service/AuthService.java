@@ -2,8 +2,8 @@ package org.acme.service;
 
 
 import org.acme.model.UserEntity;
+import org.acme.repository.UserRepository;
 
-import io.quarkus.security.identity.SecurityIdentity;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -11,25 +11,32 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 public class AuthService {
     @Inject
-    private SecurityIdentity securityIdentity;
+    private UserRepository userRepository;
 
     @Transactional
     public UserEntity authenticate(String username, String password) {
-        // Implemente a autenticação de acordo com sua lógica
-        // Aqui estamos apenas retornando um usuário fictício para demonstração
-        if ("admin".equals(username) && "admin".equals(password)) {
-            UserEntity user = new UserEntity();
-            user.setUsername(username);
+        // Busca o usuário no banco de dados pelo username
+        UserEntity user = userRepository.findByUsername(username);
+
+        
+        
+        // Verifica se o usuário existe e se a senha está correta (simplesmente para fins de demonstração)
+        if (user != null && password.equals(user.getPassword())) {
             return user;
         }
+        
         return null;
     }
 
     public boolean isUserInRole(String role) {
-        return securityIdentity.hasRole(role);
+        // Implemente a lógica para verificar se o usuário tem o papel (role) especificado
+        return false;
     }
 
     public String getUserName() {
-        return securityIdentity.getPrincipal().getName();
+        // Implemente a lógica para obter o nome do usuário autenticado
+        return null;
     }
 }
+
+

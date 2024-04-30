@@ -6,9 +6,8 @@ import org.acme.model.UserEntity;
 import org.acme.service.AuthService;
 import org.acme.util.JWTGenerator;
 
-import io.agroal.api.AgroalDataSource;
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -23,19 +22,32 @@ public class AuthController {
 
     @Inject
     private AuthService authService;
-    @Inject
+    @Inject 
     private JWTGenerator jwtGenerator;
 
     @POST
     @Path("/login")
+    @Transactional
     public Response login(LoginRequest request) {
-        UserEntity user = authService.authenticate(request.getUsername(), request.getPassword());
-        if (user != null) {
-            // Gera token JWT
-            String token = jwtGenerator.generateToken(user.getId(), user.getUsername());
-            return Response.ok(new TokenResponse(token)).build();
-        } else {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+        try {
+            UserEntity user = authService.authenticate(request.getUsername(), request.getPassword());
+            if (user != null) {
+                System.out.println("entrou no if");
+                System.out.println(user.password);
+                System.out.println(user.username);
+                System.out.println(user.getId());
+                // Gera token JWT
+                String token = jwtGenerator.generateToken(user.getId(), user.getUsername());
+                System.out.println(token);
+                return Response.ok(new TokenResponse(token)).build();
+            } else {
+                System.out.println("entrou no else");
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+        } catch (Exception e) {
+            // Log de exceção para depuração
+            e.printStackTrace();
+            return Response.serverError().build();
         }
     }
 }
