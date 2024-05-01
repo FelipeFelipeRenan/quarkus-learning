@@ -49,6 +49,8 @@ io.quarkus:quarkus-datasource-common::jar:3.9.5
 io.quarkus:quarkus-datasource::jar:3.9.5
 io.quarkus:quarkus-development-mode-spi::jar:3.9.5
 io.quarkus:quarkus-fs-util::jar:0.0.10
+io.quarkus:quarkus-hibernate-orm-panache-common::jar:3.9.5
+io.quarkus:quarkus-hibernate-orm-panache::jar:3.9.5
 io.quarkus:quarkus-hibernate-orm::jar:3.9.5
 io.quarkus:quarkus-jackson::jar:3.9.5
 io.quarkus:quarkus-jdbc-postgresql::jar:3.9.5
@@ -56,6 +58,8 @@ io.quarkus:quarkus-jsonp::jar:3.9.5
 io.quarkus:quarkus-mutiny::jar:3.9.5
 io.quarkus:quarkus-narayana-jta::jar:3.9.5
 io.quarkus:quarkus-netty::jar:3.9.5
+io.quarkus:quarkus-panache-common::jar:3.9.5
+io.quarkus:quarkus-panache-hibernate-common::jar:3.9.5
 io.quarkus:quarkus-resteasy-common::jar:3.9.5
 io.quarkus:quarkus-resteasy-jackson::jar:3.9.5
 io.quarkus:quarkus-resteasy-server-common::jar:3.9.5

@@ -1,31 +1,13 @@
 package org.acme.model;
 
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-/**
- * Example JPA entity.
- *
- * To use it, get access to a JPA EntityManager via injection.
- *
- * {@code
- * @Inject
- * EntityManager em;
- *
- * public void doSomething() {
- * MyEntity entity1 = new MyEntity();
- * entity1.field = "field-1";
- * em.persist(entity1);
- *
- * List<MyEntity> entities = em.createQuery("from MyEntity",
- * MyEntity.class).getResultList();
- * }
- * }
- */
 @Entity
-public class UserEntity {
+public class UserEntity extends PanacheEntityBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +15,14 @@ public class UserEntity {
 
     public String username;
     public String password;
+
+    public UserEntity() {
+    }
+
+    public UserEntity(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
 
     public String getUsername() {
         return username;

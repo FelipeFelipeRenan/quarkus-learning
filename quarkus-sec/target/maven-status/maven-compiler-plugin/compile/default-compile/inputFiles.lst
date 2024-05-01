@@ -1,9 +1,10 @@
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/GreetingResource.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/config/JwtConfig.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/controller/AuthController.java
+/home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/controller/UserController.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/dtos/LoginRequest.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/dtos/TokenResponse.java
-/home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/model/User.java
+/home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/model/UserEntity.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/repository/UserRepository.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/service/AuthService.java
 /home/felipefr/Langs/Java/quarkus/quarkus-learning/quarkus-sec/src/main/java/org/acme/util/JWTGenerator.java
