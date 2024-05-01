@@ -21,7 +21,7 @@ public class AuthService {
         
         
         // Verifica se o usuário existe e se a senha está correta (simplesmente para fins de demonstração)
-        if (user != null && password.equals(user.getPassword())) {
+        if (user != null && user.getPassword().equals(password)) {
             return user;
         }
         

@@ -19,4 +19,14 @@ public class UserRepository {
             .findFirst()
             .orElse(null);
     }
+
+    public UserEntity findAll(){
+        return entityManager.createQuery("SELECT * FROM UserEntity u", UserEntity.class)
+            .getResultList()
+            .stream()
+            .findAny()
+            .orElse(null);
+    }
+
+    
 }
